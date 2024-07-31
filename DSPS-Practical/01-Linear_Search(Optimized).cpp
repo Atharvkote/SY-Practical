@@ -1,7 +1,12 @@
 #include <iostream>
 using namespace std;
 
-// Function to check if the array is sorted
+void swap(int &a, int &b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
 bool isSorted(int arr[], int n) {
     for (int i = 1; i < n; ++i) {
         if (arr[i - 1] > arr[i]) {
@@ -11,7 +16,6 @@ bool isSorted(int arr[], int n) {
     return true;
 }
 
-// Selection sort function
 void selectionSort(int arr[], int n) {
     for (int i = 0; i < n - 1; ++i) {
         int min_idx = i;
@@ -20,19 +24,17 @@ void selectionSort(int arr[], int n) {
                 min_idx = j;
             }
         }
-        int temp = arr[min_idx];
-        arr[min_idx] = a[i];
-        arr[i] = temp;
+        swap(arr[min_idx], arr[i]);
     }
 }
-// Function to perform linear search
+
 int linearSearch(int arr[], int size, int target) {
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
         if (arr[i] == target) {
-            return i;  // Return the index of the target element
+            return i;
         }
     }
-    return -1;  // Return -1 if the target is not found
+    return -1;
 }
 
 int main() {
@@ -43,12 +45,18 @@ int main() {
     int arr[n];
     cout << "Enter the elements:\n";
     for (int i = 0; i < n; ++i) {
+        cout << "Element at index [" << i << "]: ";
         cin >> arr[i];
     }
 
     if (!isSorted(arr, n)) {
         cout << "Array is not sorted. Sorting the array...\n";
         selectionSort(arr, n);
+        cout << "Sorted array: [";
+        for (int i = 0; i < n; ++i) {
+            cout << arr[i] << (i < n - 1 ? ", " : "");
+        }
+        cout << "]\n";
     } else {
         cout << "Array is already sorted.\n";
     }
