@@ -5,67 +5,56 @@ using namespace std;
 
 class BankUser
 {
-  private:
+private:
     string name;
     int balance;
     int bank_number;
 
-  public:
+public:
     // Default constructor
-    BankUser()
-    {
+    BankUser(){
         this->name = "name";
         this->bank_number = 0;
         this->balance = 0;
     }
 
     // Overloaded constructor
-    BankUser(string name, int bank_number, int balance)
-    {
+    BankUser(string name, int bank_number, int balance){
         this->name = name;
         this->bank_number = bank_number;
         this->balance = balance;
     }
 
-    int getBalance()
-    {
+    int getBalance(){
         return this->balance;
     }
 
-    string getName()
-    {
+    string getName(){
         return this->name;
     }
 
-    int getBankNumber()
-    {
+    int getBankNumber(){
         return this->bank_number;
     }
 
-    bool isSufficientBalance(int withdraw_amount)
-    {
+    bool isSufficientBalance(int withdraw_amount){
         return withdraw_amount <= this->balance;
     }
 
-    void deposit(int deposit_amount)
-    {
+    void deposit(int deposit_amount){
         this->balance += deposit_amount;
     }
 
-    void withdraw(int withdraw_amount)
-    {
-        if (isSufficientBalance(withdraw_amount))
-        {
+    void withdraw(int withdraw_amount){
+        if (isSufficientBalance(withdraw_amount)){
             this->balance -= withdraw_amount;
         }
-        else
-        {
+        else{
             cout << "Insufficient Balance, Can't Withdraw.\n";
         }
     }
 
-    void displayBalance()
-    {
+    void displayBalance(){
         cout << "\n\n\t\t-----------Account Holder Details-------------\n";
         cout << "\t\t\tAccount Holder Name: " << this->getName() << endl;
         cout << "\t\t\tAccount Holder Bank Number: " << this->getBankNumber() << endl;
@@ -73,8 +62,7 @@ class BankUser
         cout << "\n";
     }
 
-    void requestWithdraw()
-    {
+    void requestWithdraw(){
         int w_amount;
         cout << "Enter Amount To Withdraw: ";
         cin >> w_amount;
@@ -88,8 +76,7 @@ int main()
     BankUser user;
     int choice, amount;
 
-    do
-    {
+    do{
         cout << "\nOperation Menu:\n";
         cout << "1. Initialize Account\n";
         cout << "2. Deposit\n";
@@ -99,12 +86,14 @@ int main()
         cout << "Enter your choice: ";
         cin >> choice;
 
-        switch (choice)
-        {
-        case 1:
-        {
+        switch (choice){
+        case 1:{
             string name;
             int bank_number, balance;
+            
+            // Clear the input buffer
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            
             cout << "Enter Name: ";
             getline(cin, name);
             cout << "Enter Bank Number: ";
@@ -118,7 +107,6 @@ int main()
         case 2:
             cout << "Enter Amount To Deposit: ";
             cin >> amount;
-
             user.deposit(amount);
             break;
         case 3:
