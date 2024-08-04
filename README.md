@@ -6,7 +6,7 @@
 `Division    ` :  B<br>
 `PRN Number  ` :  UC23M1074<br>**
 
-## Subjects Details :
+## Course Details :
 
 - **OOPL**( Object-Oriented Programming Laboratory )
   - **Course Code** : `PCCO203`
