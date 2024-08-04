@@ -1,4 +1,4 @@
-## Student Details
+## Student Details :
 
 **`Name        ` :  Atharva Kote<br>
 `Roll Number ` :  73<br>
