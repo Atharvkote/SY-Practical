@@ -5,78 +5,58 @@ using namespace std;
 
 class BankUser
 {
-private:
+public:
     string name;
     int balance;
     int bank_number;
-
-public:
-    // Default constructor
-    BankUser(){
-        this->name = "name";
-        this->bank_number = 0;
-        this->balance = 0;
+  
+    void initializeAccount() {
+        cout << "Enter Name: ";
+        cin >> name;
+        cout << "Enter Bank Number: ";
+        cin >> bank_number;
+        cout << "Enter Initial Balance: ";
+        cin >> balance;  
     }
 
-    // Overloaded constructor
-    BankUser(string name, int bank_number, int balance){
-        this->name = name;
-        this->bank_number = bank_number;
-        this->balance = balance;
+    bool isSufficientBalance(int withdraw_amount) {
+        return withdraw_amount <= balance;//dbg
     }
 
-    int getBalance(){
-        return this->balance;
-    }
+    void deposit(int deposit_amount) {
+        balance += deposit_amount;
+        cout << "Deposited Amount: " << deposit_amount << "\n" << "Current Balance: " << balance << endl;
+    } 
 
-    string getName(){
-        return this->name;
-    }
-
-    int getBankNumber(){
-        return this->bank_number;
-    }
-
-    bool isSufficientBalance(int withdraw_amount){
-        return withdraw_amount <= this->balance;
-    }
-
-    void deposit(int deposit_amount){
-        this->balance += deposit_amount;
-    }
-
-    void withdraw(int withdraw_amount){
-        if (isSufficientBalance(withdraw_amount)){
-            this->balance -= withdraw_amount;
-        }
-        else{
+    void withdraw(int w_amount) {
+        if (isSufficientBalance(w_amount)) {
+            balance -= w_amount;//dbg
+            cout << "Withdraw Amount: " << w_amount << "\n" << "Current Balance: " << balance << endl;
+        } else {
             cout << "Insufficient Balance, Can't Withdraw.\n";
         }
     }
 
-    void displayBalance(){
-        cout << "\n\n\t\t-----------Account Holder Details-------------\n";
-        cout << "\t\t\tAccount Holder Name: " << this->getName() << endl;
-        cout << "\t\t\tAccount Holder Bank Number: " << this->getBankNumber() << endl;
-        cout << "\t\t\tAccount Holder Balance: " << this->getBalance() << endl;
-        cout << "\n";
+    void displayBalance() {
+        cout << bank_number << "   " << name << "   " << balance << "\n";
     }
 
-    void requestWithdraw(){
-        int w_amount;
-        cout << "Enter Amount To Withdraw: ";
-        cin >> w_amount;
-
-        this->withdraw(w_amount);
+    static int search(BankUser users[], int n, int target) {
+        for (int i = 0; i < n; i++) {
+            if (target == users[i].bank_number) {
+                return i;
+            }
+        }
+        return -1; 
     }
 };
 
-int main()
-{
-    BankUser user;
-    int choice, amount;
+int main() {
+    BankUser users[5];
+    int numberOfUsers = 0;
+    int choice;
 
-    do{
+    do {
         cout << "\nOperation Menu:\n";
         cout << "1. Initialize Account\n";
         cout << "2. Deposit\n";
@@ -86,34 +66,50 @@ int main()
         cout << "Enter your choice: ";
         cin >> choice;
 
-        switch (choice){
-        case 1:{
-            string name;
-            int bank_number, balance;
-            
-            // Clear the input buffer
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            
-            cout << "Enter Name: ";
-            getline(cin, name);
+        switch (choice) {
+        case 1:
+            if (numberOfUsers < 5) {
+                users[numberOfUsers].initializeAccount();
+                numberOfUsers++;
+            } else {
+                cout << "Maximum number of users reached.\n";
+            }
+            break;
+        case 2: {
+            int target;
             cout << "Enter Bank Number: ";
-            cin >> bank_number;
-            cout << "Enter Initial Balance: ";
-            cin >> balance;
-
-            user = BankUser(name, bank_number, balance);
+            cin >> target;
+            int indx = BankUser::search(users, numberOfUsers, target);
+            if (indx != -1) {
+                int amount;
+                cout << "Enter Amount To Deposit: ";
+                cin >> amount;
+                users[indx].deposit(amount);
+            } else {
+                cout << "User not found.\n";
+            }
             break;
         }
-        case 2:
-            cout << "Enter Amount To Deposit: ";
-            cin >> amount;
-            user.deposit(amount);
+        case 3: {
+            int target;
+            cout << "Enter Bank Number: ";
+            cin >> target;
+            int indx = BankUser::search(users, numberOfUsers, target);
+            if (indx != -1) {
+                int w_amount;
+                cout << "Enter Amount To Withdraw: ";
+                cin >> w_amount;
+                users[indx].withdraw(w_amount);
+            } else {
+                cout << "User not found.\n";
+            }
             break;
-        case 3:
-            user.requestWithdraw();
-            break;
+        }
         case 4:
-            user.displayBalance();
+            cout<<"\n\n Account No.            Name        Balance"<< endl;
+            for (int i = 0; i < numberOfUsers; i++) {
+                users[i].displayBalance();
+            }
             break;
         case 5:
             cout << "Exiting...\n";
