@@ -3,7 +3,6 @@
 using namespace std;
 
 class Library {
-
 public:
     string book_name;
     float prize;
@@ -40,6 +39,7 @@ public:
 
         entries = temp_index;
     }
+
 
     static void sort_books(Library shelf[], int entries) {
         for (int i = 0; i < entries - 1; i++) {
@@ -126,19 +126,23 @@ int main() {
     }
 
     do {
-        cout << "\nOperation Menu:" << endl;
-        cout << "1. Sort Books" << endl;
+       cout << "\nOperation Menu:" << endl;
+        cout << "1. Sort Books Around a Prize" << endl;
         cout << "2. Drop Duplicate ( Optimized ) " << endl;
         cout << "3. Display" << endl;
         cout << "4. Remove Duplicates " << endl;
-        cout << "5. Exit" << endl;
+        cout <<" 5.Sort By Prize Decending Order"<<endl;
+        cout << "6. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
 
         switch (choice) {
             case 1: {
-                Library::sort_books(shelf, entries);
-                cout << "Books sorted by prize." << endl;
+                int target;
+                cout<<"Enter Price Around you Want to Sort :";
+                cin >>target;
+                Library::sort_in_range(shelf, target,entries);
+                
                 break;
             }
             case 2: {
@@ -154,12 +158,16 @@ int main() {
                 break;
             }
             case 5:
+                 Library ::sort_books(shelf,entries);
+                 cout << "Books sorted by prize." << endl;
+                 break;            
+            case 6:
                 cout << "Exiting..." << endl;
                 break;
             default:
                 cout << "Invalid choice. Please try again." << endl;
         }
-    } while (choice != 5);
+    } while (choice != 6);
 
     return 0;
 }
