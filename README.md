@@ -4,7 +4,7 @@
 `Roll Number ` :  73<br>
 `Department  ` :  Computer<br>
 `Division    ` :  B<br>
-`PRN Number  ` :  UC23M1074<br>**
+`PRN Number  ` :  UCS23M1074<br>**
 
 ## Course Details :
 
