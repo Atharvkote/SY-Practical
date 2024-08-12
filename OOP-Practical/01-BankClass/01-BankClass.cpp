@@ -18,14 +18,14 @@ public:
         cin >> name;
         cout << " 》Enter Bank Number: ";
         cin >> bank_number;
-        cout << " 》Enter Initial Balance: ";
+        cout << " 》Enter Initial Balance ( More Than ₹500 ) : ";
         cin >> balance;
         cout << " 》Set a 4-digit PIN: ";
         cin >> pin;
     }
 
     bool isSufficientBalance(int withdraw_amount) {
-        return withdraw_amount <= balance;
+        return withdraw_amount <= balance && (balance-withdraw_amount)>500 ;
     }
 
     bool validatePin(int enteredPin) {
@@ -44,14 +44,14 @@ public:
             cout << "Withdrawn Amount: " << w_amount << "\n"
                  << "Current Balance: " << balance << endl;
         } else {
-            cout << "[ WARNING ! ] : Insufficient Balance, Can't Withdraw.\n";
+            cout << "[ WARNING !!!!!! ] : Insufficient Balance, Can't Withdraw.\n[ Account Must Contain At least ₹ 500 ]"<<endl;
         }
     }
 
     void displayBalance() {
         cout << " ● Account Holder Name  : " << name << endl;
         cout << " ● Account Bank Number  : " << bank_number << endl;
-        cout << " ● Account Bank Balance : " << balance << endl;
+        cout << " ● Account Bank Balance : ₹" << balance << endl;
     }
 
     static int search(BankUser users[], int n, int target) {
@@ -119,10 +119,10 @@ int main() {
                         users[index].displayBalance();
                         break;
                     default:
-                        cout << "[ WARNING ! ] : Invalid choice. Please try again.\n";
+                        cout << "[ WARNING !!!!! ] : Invalid choice. Please try again.\n";
                     }
                 } else {
-                    cout << "[ WARNING ! ] : Incorrect PIN. Operation failed.\n";
+                    cout << "[ WARNING !!!!! ] : Incorrect PIN. Operation failed.\n";
                 }
             } else {
                 cout << "[ WARNING ! ] : User not found with the provided bank number.\n";
