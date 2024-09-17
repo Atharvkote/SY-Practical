@@ -53,13 +53,17 @@ public:
         cout << "\t [" << fixed << setprecision(2) << real_part << "] + i ["
              << fixed << setprecision(2) << imaginary_part << "]" << endl;
     }
+    
+    float modulus() {
+        return sqrtf(pow(real_part, 2.0) + pow(imaginary_part, 2.0));
+    }
 
     friend ostream& operator<<(ostream &out, const Complex &a);
     friend istream& operator>>(istream &in, Complex &a);
 };
 
 ostream& operator<<(ostream &output, const Complex &a) {
-    output << "\t ● [ Answer ] -> (" << a.real_part << ") + i (" << a.imaginary_part << ")";
+    output << "\t ● [ Answer ] -> (" << fixed << setprecision(2) << a.real_part << ") + i (" << fixed << setprecision(2) << a.imaginary_part << ")";
     return output;
 }
 
@@ -86,7 +90,8 @@ int main() {
         cout << "2. SUBTRACT Complex Number" << endl;
         cout << "3. MULTIPLY Complex Number " << endl;
         cout << "4. DIVIDE Complex Number " << endl;
-        cout << "5. EXIT" << endl;
+        cout << "5. MODULUS of Complex Numbers" << endl;
+        cout << "6. EXIT" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -108,12 +113,16 @@ int main() {
                 cout << z << endl;
                 break;
             case 5:
+                cout << fixed << setprecision(2) << "\nModulus of X is: " << x.modulus() << endl;
+                cout << fixed << setprecision(2) << "Modulus of Y is: " << y.modulus() << endl;
+                break;
+            case 6:
                 cout << "Exiting..." << endl;
                 break;
             default:
                 cout << "Invalid choice. Please try again." << endl;
         }
-    } while (choice != 5);
+    } while (choice != 6);
 
     return 0;
 }
