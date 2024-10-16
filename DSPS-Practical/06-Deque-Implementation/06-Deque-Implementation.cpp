@@ -82,16 +82,49 @@ public:
 };
 
 int main() {
-    Deque dq;
-    dq.insertRear(10);
-    dq.insertRear(20);
-    dq.insertRear(30);
-    cout << "Current size: " << dq.size() << endl;
-    dq.deleteFront();
-    cout << "Current size: " << dq.size() << endl;
-    dq.deleteRear();
-    cout << "Current size: " << dq.size() << endl;
-    dq.insertFront(5);
-    cout << "Current size: " << dq.size() << endl;
+    Deque deque;
+    int choice;
+    do {
+        cout << "\nOperation Menu:" << endl;
+        cout << "1. insertRear()" << endl;
+        cout << "2. insertFront()" << endl;
+        cout << "3. deleteFront()" << endl;
+        cout << "4. deleteRear()" << endl;
+        cout << "5. Exit Program" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1: {
+            int val;
+            cout << "Enter The Element To Be Added : ";
+            cin >> val;
+            deque.insertRear(val);
+            break;
+        }
+        case 2: {
+            int val;
+            cout << "Enter The Element To Be Added : ";
+            cin >> val;
+            deque.insertFront(val);
+            break;
+        }
+        case 3: {
+            deque.deleteRear();
+            break;
+        }
+        case 4 : {
+            deque.deleteFront();
+            break;
+        }
+        case 5:
+            cout << "Exiting..." << endl;
+            break;
+        default:
+            cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 4);
+
     return 0;
 }
+
