@@ -79,6 +79,19 @@ public:
         }
         return rear - front + 1;
     }
+
+    void display(){
+       cout << "Deque : [ ";
+       for( int i = front; i < rear ; i++){
+           cout << deque[i] <<" ,";
+        }
+       cout << "]";
+       cout << "Index : [ ";
+       for( int i = front; i <= rear ; i++){
+           cout << i <<" ,";
+        }
+        cout << "]";
+    }
 };
 
 int main() {
@@ -100,6 +113,7 @@ int main() {
             cout << "Enter The Element To Be Added : ";
             cin >> val;
             deque.insertRear(val);
+            deque.display();
             break;
         }
         case 2: {
@@ -107,14 +121,17 @@ int main() {
             cout << "Enter The Element To Be Added : ";
             cin >> val;
             deque.insertFront(val);
+            deque.display();
             break;
         }
         case 3: {
             deque.deleteRear();
+            deque.display();
             break;
         }
         case 4 : {
             deque.deleteFront();
+            deque.display();
             break;
         }
         case 5:
@@ -123,7 +140,7 @@ int main() {
         default:
             cout << "Invalid choice. Please try again." << endl;
         }
-    } while (choice != 4);
+    } while (choice != 5);
 
     return 0;
 }
