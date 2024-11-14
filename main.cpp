@@ -4,6 +4,7 @@
 using namespace std;
 
 const int MAX_PLAYERS = 10;
+const int MAX_MOVE = 9;
 
 class Board {
 private:
@@ -24,12 +25,12 @@ public:
     void display() const {
         cout << "\n";
         for (int i = 0; i < 3; i++) {
-            cout << "     |     |     \n";
-            cout << "  " << board[i][0] << "  |  " << board[i][1] << "  |  " << board[i][2] << "  \n";
+            cout <<"\t"<< "     |     |     \n";
+            cout <<"\t"<< "  " << board[i][0] << "  |  " << board[i][1] << "  |  " << board[i][2] << "  \n";
             if (i < 2) {
-                cout << "_____|_____|_____\n";
+                cout<<"\t" << "_____|_____|_____\n";
             } else {
-                cout << "     |     |     \n";
+                cout <<"\t"<< "     |     |     \n";
             }
         }
         cout << "\n";
@@ -188,7 +189,7 @@ public:
 
         cout << "Starting a new game between " << player1->getName() << " and " << player2->getName() << "!\n";
         board.display();
-
+        int i = 0;
         while (true) {
             symbol = turn ? 'X' : 'O';
             cout << (turn ? player1->getName() : player2->getName()) << " (" << symbol << "), enter your move (1-9): ";
@@ -219,6 +220,7 @@ public:
         char choice;
         do {
             string name1, name2;
+            cout << "=================[ TIC TAC TOE ]=====================";
             cout << "\nEnter the name of player 1: ";
             cin >> name1;
             PlayerInfo* player1 = db.searchPlayer(name1);
