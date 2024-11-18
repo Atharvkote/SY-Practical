@@ -8,14 +8,45 @@
 using namespace std;
 
 class Player {
-public:
-    string name;
-    int wins;
-    int rank;
+private:
     string password;
 
-    Player(string name, string password)
-        : name(name), wins(0), rank(0), password(password) {}
+public:
+    string name;
+    double wins; // Wins can now be fractional
+    int rank;
+    int gamesPlayed; // Total games played
+    double winPercentage; // Calculated win percentage
+
+    Player(const string& name, const string& password)
+        : name(name), wins(0.0), rank(0), gamesPlayed(0), winPercentage(0.0), password(password) {}
+
+    bool verifyPassword(const string& pass) const {
+        return password == pass;
+    }
+
+    void updateWinPercentage() {
+        if (gamesPlayed > 0) {
+            winPercentage = (wins / gamesPlayed) * 100;
+        } else {
+            winPercentage = 0.0; // No games played, set to 0%
+        }
+    }
+
+    void incrementGames() {
+        gamesPlayed++;
+    }
+
+    void addWin(double increment = 1.0) {
+        wins += increment;
+        incrementGames();
+        updateWinPercentage();
+    }
+
+    void addDraw() {
+        incrementGames();
+        updateWinPercentage();
+    }
 };
 
 class TicTacToe {
@@ -41,15 +72,17 @@ public:
     }
 
     void displayBoard() {
-        cout << "\nCurrent Board:\n";
+        cout << "\n";
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                cout << board[i][j];
-                if (j < 2) cout << " | ";
+            cout << "\t     |     |     \n";
+            cout << "\t  " << board[i][0] << "  |  " << board[i][1] << "  |  " << board[i][2] << "  \n";
+            if (i < 2) {
+                cout << "\t_____|_____|_____\n";
+            } else {
+                cout << "\t     |     |     \n";
             }
-            if (i < 2) cout << "\n---------\n";
         }
-        cout << endl;
+        cout << "\n";
     }
 
     bool addPlayer(const string& name, const string& password) {
@@ -62,25 +95,40 @@ public:
     }
 
     void displayLeaderboard() {
-        cout << "\n--- Leaderboard ---\n";
-        cout << left << setw(15) << "Name" << setw(10) << "Wins" << setw(10) << "Rank\n";
-        cout << "-----------------------------\n";
+        cout << "\n--------- Leaderboard ------------\n";
+        cout << left << setw(15) << "Name" << setw(10) << "Wins" << setw(10) << "Win %" << setw(10) << "Rank\n";
+        cout << "------------------------------------\n";
 
+        // Sort players by win percentage, then by wins, then by name
         vector<Player> sortedPlayers = players;
         sort(sortedPlayers.begin(), sortedPlayers.end(),
-            [](const Player& a, const Player& b) { return a.wins > b.wins; });
+            [](const Player& a, const Player& b) {
+                if (a.winPercentage != b.winPercentage)
+                    return a.winPercentage > b.winPercentage; // Descending order of win percentage
+                if (a.wins != b.wins)
+                    return a.wins > b.wins; // Descending order of wins
+                return a.name < b.name;    // Stable sort by name
+            });
 
-        int rank = 1;
-        for (const auto& player : sortedPlayers) {
-            cout << left << setw(15) << player.name
-                 << setw(10) << player.wins
-                 << setw(10) << rank++ << endl;
+        // Assign ranks dynamically
+        double lastWinPercentage = -1;
+        int currentRank = 0;
+        for (size_t i = 0; i < sortedPlayers.size(); i++) {
+            if (sortedPlayers[i].winPercentage != lastWinPercentage) {
+                currentRank = i + 1;
+                lastWinPercentage = sortedPlayers[i].winPercentage;
+            }
+            sortedPlayers[i].rank = currentRank;
+            cout << left << setw(15) << sortedPlayers[i].name
+                 << setw(10) << sortedPlayers[i].wins
+                 << setw(10) << fixed << setprecision(2) << sortedPlayers[i].winPercentage
+                 << setw(10) << sortedPlayers[i].rank << endl;
         }
     }
 
     bool editPlayerName(const string& oldName, const string& newName, const string& password) {
         for (auto& player : players) {
-            if (player.name == oldName && player.password == password) {
+            if (player.name == oldName && player.verifyPassword(password)) {
                 player.name = newName;
                 savePlayers();
                 return true;
@@ -153,14 +201,17 @@ public:
 
             if (checkWin(playerSymbols[current])) {
                 cout << "Player " << playerSymbols[current] << " wins!\n";
-                if (current == 0) player1->wins++;
-                else player2->wins++;
+                if (current == 0) player1->addWin();
+                else player2->addWin();
                 savePlayers();
                 break;
             }
 
             if (isBoardFull()) {
                 cout << "It's a draw!\n";
+                player1->addDraw();
+                player2->addDraw();
+                savePlayers();
                 break;
             }
 
@@ -171,7 +222,7 @@ public:
     void savePlayers() {
         ofstream file("players.txt");
         for (const auto& player : players) {
-            file << player.name << " " << player.wins << " " << player.password << endl;
+            file << player.name << " " << player.wins << " " << player.gamesPlayed << " " << player.winPercentage << "\n";
         }
         file.close();
     }
@@ -180,10 +231,14 @@ public:
         ifstream file("players.txt");
         if (file.is_open()) {
             string name, password;
-            int wins;
-            while (file >> name >> wins >> password) {
+            double wins;
+            int gamesPlayed;
+            double winPercentage;
+            while (file >> name >> wins >> gamesPlayed >> winPercentage) {
                 players.emplace_back(name, password);
                 players.back().wins = wins;
+                players.back().gamesPlayed = gamesPlayed;
+                players.back().winPercentage = winPercentage;
             }
             file.close();
         }
@@ -192,7 +247,7 @@ public:
     void showGameReplay() {
         cout << "\n--- Game Replay ---\n";
         for (const auto& move : moveHistory) {
-            cout << move << endl;
+            cout << move << "\n";
         }
     }
 };
@@ -200,55 +255,47 @@ public:
 int main() {
     TicTacToe game;
     int choice;
-    string name, password, newName;
-    string player2;
+    string name, player2, password;
 
     do {
-        cout << "\n--- Tic-Tac-Toe Menu ---\n";
-        cout << "1. Add New Player\n";
-        cout << "2. Edit Player Name\n";
-        cout << "3. Search Player\n";
-        cout << "4. Display Leaderboard\n";
-        cout << "5. Play Game\n";
-        cout << "6. Show Game Replay\n";
-        cout << "7. Exit\n";
+        cout << "\n1. Add New Player\n2. Edit Player Name\n3. Search Player\n4. Show Leaderboard\n5. Play Game\n6. Show Game Replay\n7. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
         switch (choice) {
         case 1:
-            cout << "Enter player name: ";
+            cout << "Enter Player Name: ";
             cin >> name;
-            cout << "Enter password: ";
+            cout << "Enter Password: ";
             cin >> password;
             if (game.addPlayer(name, password)) {
-                cout << "Player added successfully.\n";
+                cout << "Player added successfully!\n";
             } else {
-                cout << "Player already exists!\n";
+                cout << "Player already exists.\n";
             }
             break;
 
         case 2:
-            cout << "Enter current player name: ";
+            cout << "Enter Player Name to Edit: ";
             cin >> name;
-            cout << "Enter password: ";
+            cout << "Enter New Name: ";
+            cin >> player2;
+            cout << "Enter Password: ";
             cin >> password;
-            cout << "Enter new player name: ";
-            cin >> newName;
-            if (game.editPlayerName(name, newName, password)) {
-                cout << "Player name updated successfully.\n";
+            if (game.editPlayerName(name, player2, password)) {
+                cout << "Player name updated successfully!\n";
             } else {
-                cout << "Invalid credentials!\n";
+                cout << "Failed to edit player name.\n";
             }
             break;
 
         case 3:
-            cout << "Enter player name to search: ";
+            cout << "Enter Player Name to Search: ";
             cin >> name;
             if (game.searchPlayer(name)) {
-                cout << "Player " << name << " found.\n";
+                cout << "Player found!\n";
             } else {
-                cout << "Player not found.\n";
+                cout << "Player not found!\n";
             }
             break;
 
@@ -269,11 +316,12 @@ int main() {
             break;
 
         case 7:
-            cout << "Exiting game. Goodbye!\n";
+            cout << "Exiting game.\n";
             break;
 
         default:
-            cout << "Invalid choice! Please try again.\n";
+            cout << "Invalid choice! Try again.\n";
+            break;
         }
     } while (choice != 7);
 

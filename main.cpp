@@ -4,11 +4,11 @@
 using namespace std;
 
 const int MAX_PLAYERS = 10;
-const int MAX_MOVE = 9;
 
 class Board {
 private:
     char board[3][3];
+    char lastBoard[3][3];  // To store the last game's board state
 
 public:
     Board() { reset(); }
@@ -22,15 +22,37 @@ public:
         }
     }
 
+    void saveLastState() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                lastBoard[i][j] = board[i][j];
+            }
+        }
+    }
+
+    void replayLastGame() const {
+        cout << "\nReplaying the last game:\n";
+        for (int i = 0; i < 3; i++) {
+            cout << "\t     |     |     \n";
+            cout << "\t  " << lastBoard[i][0] << "  |  " << lastBoard[i][1] << "  |  " << lastBoard[i][2] << "  \n";
+            if (i < 2) {
+                cout << "\t_____|_____|_____\n";
+            } else {
+                cout << "\t     |     |     \n";
+            }
+        }
+        cout << "\n";
+    }
+
     void display() const {
         cout << "\n";
         for (int i = 0; i < 3; i++) {
-            cout <<"\t"<< "     |     |     \n";
-            cout <<"\t"<< "  " << board[i][0] << "  |  " << board[i][1] << "  |  " << board[i][2] << "  \n";
+            cout << "\t     |     |     \n";
+            cout << "\t  " << board[i][0] << "  |  " << board[i][1] << "  |  " << board[i][2] << "  \n";
             if (i < 2) {
-                cout<<"\t" << "_____|_____|_____\n";
+                cout << "\t_____|_____|_____\n";
             } else {
-                cout <<"\t"<< "     |     |     \n";
+                cout << "\t     |     |     \n";
             }
         }
         cout << "\n";
@@ -77,19 +99,9 @@ private:
     string password;
 
 public:
-    PlayerInfo() {
-        name = "";
-        password = "";
-        wins = 0;
-        rank = 0;
-    }
+    PlayerInfo() : wins(0), rank(0) {}
 
-    PlayerInfo(string n, string pass, int r, int w) {
-        name = n;
-        password = pass;
-        rank = r;
-        wins = w;
-    }
+    PlayerInfo(string n, string pass) : name(n), password(pass), wins(0), rank(0) {}
 
     string getName() const { return name; }
     int getWins() const { return wins; }
@@ -106,6 +118,7 @@ public:
     }
 
     void incrementWins() { wins++; }
+    void addDrawPoint() { wins += 0.5; }
     void setRank(int r) { rank = r; }
 };
 
@@ -119,14 +132,14 @@ public:
 
     void addNewPlayer(const string &name, const string &password) {
         if (playerCount < MAX_PLAYERS) {
-            players[playerCount++] = PlayerInfo(name, password, 0, 0);
+            players[playerCount++] = PlayerInfo(name, password);
             cout << "Player added: " << name << "\n";
         } else {
             cout << "Player database is full.\n";
         }
     }
 
-    PlayerInfo* searchPlayer(const string &name) {
+    PlayerInfo *searchPlayer(const string &name) {
         for (int i = 0; i < playerCount; i++) {
             if (players[i].getName() == name) {
                 return &players[i];
@@ -137,14 +150,17 @@ public:
     }
 
     void displayLeaderboard() const {
-        cout << "\nLeaderboard:\n";
-        cout << left << setw(15) << "Name" << setw(10) << "Wins" << setw(10) << "Rank" << "\n";
-        cout << "----------------------------------\n";
+        cout << "\n+-------------------------------+\n";
+        cout << "|         Leaderboard           |\n";
+        cout << "+-------------------------------+\n";
+        cout << "| " << left << setw(15) << "Name" << setw(10) << "Wins" << "Rank |\n";
+        cout << "+-------------------------------+\n";
         for (int i = 0; i < playerCount; i++) {
-            cout << left << setw(15) << players[i].getName()
+            cout << "| " << left << setw(15) << players[i].getName()
                  << setw(10) << players[i].getWins()
-                 << setw(10) << players[i].getRank() << "\n";
+                 << players[i].getRank() << " |\n";
         }
+        cout << "+-------------------------------+\n";
     }
 
     void updateRanks() {
@@ -155,9 +171,15 @@ public:
                     swap(players[i], players[j]);
                 }
             }
-            players[i].setRank(i + 1);
         }
-        if (playerCount > 0) players[playerCount - 1].setRank(playerCount);
+
+        for (int i = 0; i < playerCount; i++) {
+            if (i > 0 && players[i].getWins() == players[i - 1].getWins()) {
+                players[i].setRank(players[i - 1].getRank());
+            } else {
+                players[i].setRank(i + 1);
+            }
+        }
     }
 };
 
@@ -181,7 +203,7 @@ public:
         }
     }
 
-    void playRound(PlayerInfo* player1, PlayerInfo* player2) {
+    void playRound(PlayerInfo *player1, PlayerInfo *player2) {
         board.reset();
         bool turn = true;  // true for player1, false for player2
         int choice;
@@ -189,7 +211,7 @@ public:
 
         cout << "Starting a new game between " << player1->getName() << " and " << player2->getName() << "!\n";
         board.display();
-        int i = 0;
+
         while (true) {
             symbol = turn ? 'X' : 'O';
             cout << (turn ? player1->getName() : player2->getName()) << " (" << symbol << "), enter your move (1-9): ";
@@ -204,15 +226,19 @@ public:
             if (board.checkWin(symbol)) {
                 cout << (turn ? player1->getName() : player2->getName()) << " wins this round!\n";
                 (turn ? player1 : player2)->incrementWins();
-                db.updateRanks();
-                db.displayLeaderboard();
                 break;
             } else if (board.checkDraw()) {
                 cout << "It's a draw!\n";
+                player1->addDrawPoint();
+                player2->addDrawPoint();
                 break;
             }
             turn = !turn;
         }
+
+        board.saveLastState();
+        db.updateRanks();
+        db.displayLeaderboard();
     }
 
     void play() {
@@ -220,41 +246,26 @@ public:
         char choice;
         do {
             string name1, name2;
-            cout << "=================[ TIC TAC TOE ]=====================";
             cout << "\nEnter the name of player 1: ";
             cin >> name1;
-            PlayerInfo* player1 = db.searchPlayer(name1);
+            PlayerInfo *player1 = db.searchPlayer(name1);
             if (!player1) continue;
 
             cout << "Enter the name of player 2: ";
             cin >> name2;
-            PlayerInfo* player2 = db.searchPlayer(name2);
-            if (!player2 || player1 == player2) continue;
+            PlayerInfo *player2 = db.searchPlayer(name2);
+            if (!player2) continue;
 
             playRound(player1, player2);
 
-            cout << "Do you want to play another round with the same players? (y/n): ";
+            cout << "Replay last game? (y/n): ";
             cin >> choice;
-            if (choice == 'n') {
-                cout << "Do you want to play against:\n1. A new user\n2. An existing player\nSelect option (1 or 2): ";
-                int option;
-                cin >> option;
-                if (option == 1) {
-                    string newName, newPassword;
-                    cout << "Enter new player name: ";
-                    cin >> newName;
-                    cout << "Enter new player password: ";
-                    cin >> newPassword;
-                    db.addNewPlayer(newName, newPassword);
-                    player2 = db.searchPlayer(newName); // Set player2 to the new player
-                } else if (option == 2) {
-                    cout << "Enter the name of the existing player: ";
-                    cin >> name2;
-                    player2 = db.searchPlayer(name2);
-                    if (!player2 || player1 == player2) continue;
-                }
-                playRound(player1, player2);
+            if (choice == 'y') {
+                board.replayLastGame();
             }
+
+            cout << "Do you want to play another game? (y/n): ";
+            cin >> choice;
         } while (choice == 'y');
     }
 };
