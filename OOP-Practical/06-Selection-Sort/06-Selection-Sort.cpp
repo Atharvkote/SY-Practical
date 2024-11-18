@@ -1,21 +1,22 @@
-#include<iostream>
+#include <iostream>
 using namespace std;
 
-template<typename T>
+template <typename T>
 void print_array(T a[], int size) {
+    cout <<"[ ";
     for (int i = 0; i < size; i++) {
-        cout << a[i] << " ";
+        cout << a[i] << " ,";
     }
-    cout << endl;
+    cout <<" ]"<< endl;
 }
 
-template<typename T>
+template <typename T>
 void selectionSort(T a[], int size) {
     for (int i = 0; i < size - 1; i++) {
-        int minIndex = i; 
+        int minIndex = i;
         for (int j = i + 1; j < size; j++) {
-            if (a[j] < a[minIndex]) { 
-                minIndex = j; 
+            if (a[j] < a[minIndex]) {
+                minIndex = j;
             }
         }
 
@@ -26,22 +27,64 @@ void selectionSort(T a[], int size) {
 }
 
 int main() {
-    int a[] = {10, 7, 8, 9, 1};
-    float a2[] = {10.5, 7.2, 8.1, 3.2, 4.5};
-    char a3[] = {'a', 's', 'c', 'v', 'f'};
+    int choice;
+    do {
+        cout << "Choose the type of array to sort:" << endl;
+        cout << "1. Integer array" << endl;
+        cout << "2. Float array" << endl;
+        cout << "3. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    selectionSort(a,5);
-    selectionSort(a2, 5);
-    selectionSort(a3, 5);
+        switch (choice) {
+            case 1: {
+                int a[100], size;
+                cout << "Enter the size of the integer array (max 100): ";
+                cin >> size;
 
-    cout << "Sorted integer array: ";
-    print_array(a, 5);
-    
-    cout << "Sorted float array: ";
-    print_array(a2, 5);
-    
-    cout << "Sorted char array: ";
-    print_array(a3, 5);
+                if (size > 100) {
+                    cout << "Size exceeds limit of 100. Try again." << endl;
+                    break;
+                }
+
+                cout << "Enter " << size << " elements: ";
+                for (int i = 0; i < size; i++) {
+                    cin >> a[i];
+                }
+
+                selectionSort(a, size);
+                cout << "Sorted integer array: ";
+                print_array(a, size);
+                break;
+            }
+            case 2: {
+                float a[100];
+                int size;
+                cout << "Enter the size of the float array (max 100): ";
+                cin >> size;
+
+                if (size > 100) {
+                    cout << "Size exceeds limit of 100. Try again." << endl;
+                    break;
+                }
+
+                cout << "Enter " << size << " elements: ";
+                for (int i = 0; i < size; i++) {
+                    cin >> a[i];
+                }
+
+                selectionSort(a, size);
+                cout << "Sorted float array: ";
+                print_array(a, size);
+                break;
+            }
+            case 3:
+                cout << "Exiting the program." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 3);
 
     return 0;
 }
