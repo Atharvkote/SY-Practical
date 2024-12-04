@@ -28,6 +28,15 @@ void selectionSort(T a[], int size) {
 
 int main() {
     int choice;
+    int b[]={1,4,3,2,5};
+    selectionSort(b, 5);
+                cout << "Sorted integer array: ";
+                print_array(b, 5);
+    int c[]={1.3,4.4,3.5,2.5,5.4};
+    selectionSort(b, 5);
+                cout << "Sorted integer array: ";
+                print_array(b, 5);
+    
     do {
         cout << "Choose the type of array to sort:" << endl;
         cout << "1. Integer array" << endl;
