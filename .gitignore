@@ -1,0 +1,8 @@
+
+# IDE/Editor settings
+.vscode/
+.idea/
+
+
+#Output Files
+output/
