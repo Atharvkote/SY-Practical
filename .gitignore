@@ -1,8 +1,8 @@
-
 # IDE/Editor settings
 .vscode/
 .idea/
 
-
-#Output Files
+# Output Files
 output/
+*.exe
+# *.class
