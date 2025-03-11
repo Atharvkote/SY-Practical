@@ -8,9 +8,18 @@
 
 ## Course Details :
 
-- **OOPL**( Object-Oriented Programming Laboratory )
+- **DSL**( Data Structure Laboratory )
   - **Course Code** : `PCCO204`
-  - `Assignment` : [ [Click Here](/OOP-Practical) ]
+  - `Assignment` : [ [Click Here](/ADS-Practical) ]
+ 
+- **JP**( JAVA Programming Laboratory )
+  - **Course Code** : `PCCO204`
+  - `Assignment` : [ [Click Here](/JP-Practical) ]
+
+ - **OOPL**( Object-Oriented Programming Laboratory )
+   - **Course Code** : `PCCO204`
+   - `Assignment` : [ [Click Here](/OOP-Practical) ]
+
 - **DSPS**( Data Structures and Problem Solving Lab)
   - **Course Code** : `PCCO205`
   - `Assignment` : [ [Click Here](/DSPS-Practical) ]
