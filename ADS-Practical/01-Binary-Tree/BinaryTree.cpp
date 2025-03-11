@@ -96,6 +96,36 @@ public:
             break;
         }
     }
+
+    int NumberOfNode(Node *root){
+        if(root == nullptr){ return 0; }
+        
+        int leftCount = NumberOfNode(root->left);
+        int rightCount = NumberOfNode(root->right);
+        
+        return leftCount + rightCount + 1;
+    }
+
+    int heightOfTree(Node *root){
+        if(root == nullptr){ return 0; }
+        
+        int leftHeight = NumberOfNode(root->left);
+        int rightHeight = NumberOfNode(root->right);
+        
+        return max(leftHeight , rightHeight) + 1;
+    }
+
+    void getRoot(){ cout << "Root : " << root->data << endl;}
+
+    void getLeafNode(Node* root){
+        if(root->left==nullptr && root->right == nullptr){
+            cout << root->data <<" ,";
+        }
+        if(root == nullptr){ return; }
+        getLeafNode(root->left);
+        getLeafNode(root->right);
+    }
+
     void createBinaryTree()
     {
         int val,choice;
@@ -133,7 +163,11 @@ int main(){
         cout << "[1] Create Binary Tree\n";
         cout << "[2] Insert Node\n";
         cout << "[3] Display Tree Traversals\n";
-        cout << "[4] Exit\n";
+        cout << "[4] Get Number Of Nodes\n";
+        cout << "[5] Get Height of the Tree\n";
+        cout << "[6] Get Root\n";
+        cout << "[7] Leaf Leave Node\n";
+        cout << "[8] Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
         
@@ -148,11 +182,27 @@ int main(){
                 tree.displayBinaryTree();
                 break;
             case 4:
+            int number;
+                 number = tree.NumberOfNode(tree.root);
+                cout << "Number Of Node : "<< number;
+                break;
+            case 5:
+            int height;
+                height = tree.heightOfTree(tree.root);
+                cout << "Number Of Node : "<< height;
+                break;
+            case 6:
+                tree.getRoot();
+                break;
+            case 7:
+                tree.getLeafNode(tree.root);
+                break;
+            case 8:
                 cout << "Exiting program..." << endl;
                 break;
             default:
                 cout << "Invalid choice, please try again." << endl;
         }
-    } while (choice != 4);
+    } while (choice != 8);
     return 0;
 }
