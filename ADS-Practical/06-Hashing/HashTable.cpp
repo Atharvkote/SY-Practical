@@ -20,6 +20,27 @@ public:
     }
 };
 
+class Student{
+    int roll_no;
+    string name;
+    string div;
+
+    Student(int roll_no ,string name,string div){
+        this->roll_no = roll_no;
+        this->name = name;
+        this->div = div;
+    }
+
+    Student(){
+        roll_no = 0;
+        name = "";
+        div = "";
+    }
+
+    
+
+};
+
 class HashTable
 {
 public:
@@ -48,7 +69,7 @@ public:
     {
         for (int i = 0; i < size; i++)
         {
-            if (!is_occupied[i])
+            if ()
                 return false;
         }
         return true;

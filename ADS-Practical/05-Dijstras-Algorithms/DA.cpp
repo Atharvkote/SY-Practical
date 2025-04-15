@@ -96,7 +96,7 @@ public:
             }
 
             if (minIndex == -1)
-                break; // Remaining vertices are not reachable
+                break;
 
             visited[minIndex] = true;
 
