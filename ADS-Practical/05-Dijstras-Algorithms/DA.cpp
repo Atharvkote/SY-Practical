@@ -133,8 +133,8 @@ public:
         }
 
         int min_path = INT_MAX;
-        int min_path_index = -1;           
-        for (int i = 1; i < vertices; i++) 
+        int min_path_index = -1;
+        for (int i = 1; i < vertices; i++)
         {
             if (distance[i] < min_path)
             {
