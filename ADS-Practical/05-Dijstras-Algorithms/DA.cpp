@@ -102,7 +102,7 @@ public:
 
             for (int k = 0; k < vertices; k++)
             {
-                if (graph[mindex][k].weight != 0 && !visited[k])
+                if (graph[minIndex][k].weight != 0 && !visited[k])
                 {
                     if (distance[minIndex] + graph[minIndex][k].weight < distance[k])
                     {

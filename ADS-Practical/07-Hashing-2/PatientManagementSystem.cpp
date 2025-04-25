@@ -17,43 +17,43 @@ public:
     }
 };
 
-class Album {
+class Patient {
 public:
-    int album_number;
-    string album_name;
-    int number_of_songs;
+    int patient_id;
+    string patient_name;
+    string treatment_type;
 
-    Album() {
-        album_name = "";
-        album_number = 0;
-        number_of_songs = 0;
+    Patient() {
+        patient_id = 0;
+        patient_name = "";
+        treatment_type = "";
     }
 
-    Album(string name, int number, int songs) {
-        album_name = name;
-        album_number = number;
-        number_of_songs = songs;
+    Patient(string name, int id, string treatment) {
+        patient_name = name;
+        patient_id = id;
+        treatment_type = treatment;
     }
 
     void accept() {
-        cout << "Enter Name of Album: ";
-        cin >> ws; // clear newline
-        getline(cin, album_name);
-        cout << "Enter Album Number: ";
-        cin >> album_number;
-        cout << "Enter Number of Songs in this Album: ";
-        cin >> number_of_songs;
+        cout << "Enter Patient ID: ";
+        cin >> patient_id;
+        cin.ignore();  // Clear newline
+        cout << "Enter Patient Name: ";
+        getline(cin, patient_name);
+        cout << "Enter Treatment Type: ";
+        getline(cin, treatment_type);
     }
 
     void display() {
-        cout << "  :: Album Number : " << album_number << ", :: Name : " << album_name
-             << ", :: Songs : " << number_of_songs;
+        cout << "  :: ID : " << patient_id << ", :: Name : " << patient_name
+             << ", :: Treatment : " << treatment_type;
     }
 };
 
 class HashTable {
 public:
-    Album hash_table[100];
+    Patient hash_table[100];
     bool is_occupied[100];
     probe_pairs probes[100];
     int size;
@@ -78,76 +78,82 @@ public:
         return true;
     }
 
-    void add(Album val) {
+    void add(Patient val) {
         if (is_table_full()) {
-            cout << "Hash table is full. Cannot insert album number " << val.album_number << endl;
+            cout << "Hash table is full. Cannot insert patient ID " << val.patient_id << endl;
             return;
         }
+    
+        int hash_value = hash_function(val.patient_id);
+        int i = hash_value;
+        int probe = 0;
+    
+        while (is_occupied[i]) {
+            if (hash_table[i].patient_id == val.patient_id) {
+                cout << "Duplicate patient ID! Cannot insert.\n";
+                return;
+            }
+    
+            cout << "Collision occurred at index " << i << " for patient ID " << val.patient_id << endl;
+    
+            probe++;
+            i = (hash_value + probe * probe) % size;
+        }
+    
+        hash_table[i] = val;
+        is_occupied[i] = true;
+        probes[i] = probe_pairs(val.patient_id, probe);
+    
+        cout << "Inserted patient ID " << val.patient_id << " at index " << i
+             << " with " << probe << " probes\n";
+    }
+    
 
-        int hash_value = hash_function(val.album_number);
+    void search() {
+        Patient val;
+        cout << "Enter patient ID to search: ";
+        cin >> val.patient_id;
+
+        int hash_value = hash_function(val.patient_id);
         int i = hash_value;
         int probe = 0;
 
-        while (is_occupied[i]) {
-            if (hash_table[i].album_number == val.album_number) {
-                cout << "Duplicate album number! Cannot insert.\n";
-                return;
-            }
-            i = (i + 1) % size;
-            probe++;
-        }
-
-        hash_table[i] = val;
-        is_occupied[i] = true;
-        probes[i] = probe_pairs(val.album_number, probe);
-
-        cout << "Inserted album number " << val.album_number << " at index " << i
-             << " with " << probe << " probes\n";
-    }
-
-    void search() {
-        Album val;
-        val.accept();
-
-        int hash_value = hash_function(val.album_number);
-        int i = hash_value;
-        int attempts = 0;
-
-        while (is_occupied[i] && attempts < size) {
-            if (hash_table[i].album_number == val.album_number) {
-                cout << "Value Found at Index: " << i << endl;
+        while (is_occupied[i] && probe < size) {
+            if (hash_table[i].patient_id == val.patient_id) {
+                cout << "Patient found at index " << i << endl;
                 hash_table[i].display();
                 cout << endl;
                 return;
             }
-            i = (i + 1) % size;
-            attempts++;
+            probe++;
+            i = (hash_value + probe * probe) % size;
         }
 
-        cout << "Value Not Found!" << endl;
+        cout << "Patient not found!\n";
     }
 
     void remove() {
-        Album val;
-        val.accept();
+        Patient val;
+        cout << "Enter patient ID to remove: ";
+        cin >> val.patient_id;
 
-        int hash_value = hash_function(val.album_number);
+        int hash_value = hash_function(val.patient_id);
         int i = hash_value;
-        int attempts = 0;
+        int probe = 0;
 
-        while (is_occupied[i] && attempts < size) {
-            if (hash_table[i].album_number == val.album_number) {
+        while (is_occupied[i] && probe < size) {
+            if (hash_table[i].patient_id == val.patient_id) {
                 is_occupied[i] = false;
-                hash_table[i] = Album();
+                hash_table[i] = Patient();
                 probes[i] = probe_pairs();
-                cout << "Album removed from index " << i << endl;
+                cout << "Patient removed from index " << i << endl;
                 return;
             }
-            i = (i + 1) % size;
-            attempts++;
+            probe++;
+            i = (hash_value + probe * probe) % size;
         }
 
-        cout << "Album not found. Cannot remove.\n";
+        cout << "Patient not found. Cannot remove.\n";
     }
 
     void display() {
@@ -158,7 +164,7 @@ public:
                 hash_table[i].display();
                 cout << " (Probes: " << probes[i].probe << ")";
             } else {
-                cout << "null";
+                cout << " null";
             }
             cout << endl;
         }
@@ -175,9 +181,9 @@ int main() {
     int choice;
     do {
         cout << "\nMenu:\n";
-        cout << "1. Add element\n";
-        cout << "2. Search element\n";
-        cout << "3. Remove element\n";
+        cout << "1. Add patient\n";
+        cout << "2. Search patient\n";
+        cout << "3. Remove patient\n";
         cout << "4. Display table\n";
         cout << "5. Exit\n";
         cout << "Enter your choice: ";
@@ -185,7 +191,7 @@ int main() {
 
         switch (choice) {
             case 1: {
-                Album val;
+                Patient val;
                 val.accept();
                 h.add(val);
                 break;
