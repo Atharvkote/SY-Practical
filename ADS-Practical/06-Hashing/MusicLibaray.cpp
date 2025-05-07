@@ -112,6 +112,7 @@ public:
         int hash_value = hash_function(val.album_number);
         int i = hash_value;
         int attempts = 0;
+        
 
         while (is_occupied[i] && attempts < size) {
             if (hash_table[i].album_number == val.album_number) {
@@ -125,6 +126,26 @@ public:
         }
 
         cout << "Value Not Found!" << endl;
+    }
+
+    void effective_search(){
+        Album val;
+        val.accept();
+
+        int hash_value = hash_function(val.album_number);
+        int i = hash_value;
+        int probe = probes[i].probe;
+
+        if(hash_table[i + probe].album_number == val.album_number){
+            cout << "Value Found at Index: " << i + probe << endl;
+            hash_table[i + probe].display();
+            cout << endl;
+            return;
+        }
+        else{
+            cout << "Value Not Found!" << endl;
+            return;
+        }
     }
 
     void remove() {

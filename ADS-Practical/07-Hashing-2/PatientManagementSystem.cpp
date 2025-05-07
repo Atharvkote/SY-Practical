@@ -132,6 +132,27 @@ public:
         cout << "Patient not found!\n";
     }
 
+    void effective_search(){
+        Patient val;
+        cout << "Enter patient ID to search: ";
+        cin >> val.patient_id;
+
+        int hash_value = hash_function(val.patient_id);
+        int i = hash_value;
+        int probe = probes[i].probe;
+
+        if(hash_table[i + probe].patient_id == val.patient_id){
+            cout << "Value Found at Index: " << i + probe << endl;
+            hash_table[i + probe].display();
+            cout << endl;
+            return;
+        }
+        else{
+            cout << "Value Not Found!" << endl;
+            return;
+        }
+    }
+
     void remove() {
         Patient val;
         cout << "Enter patient ID to remove: ";
