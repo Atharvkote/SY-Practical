@@ -80,7 +80,7 @@ public:
     }
 
     void calculate_cost()
-    {
+    { 
         for (int i = 0; i <= number_of_keys; i++)
         {
             cost[i][i] = failure[i];
@@ -114,7 +114,7 @@ public:
         int r = root[i][j];
         Node *node = new Node(key[r - 1]);
 
-        node->left = obst_constructor(i, r - 1);
+        node->left = obst_constructor(i, r - 1)-;
         node->right = obst_constructor(r + 1, j);
 
         return node;

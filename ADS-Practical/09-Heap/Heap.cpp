@@ -228,7 +228,7 @@ int main()
         if (isMaxheap == 1) {
             cout << "Initializing Max Heap........\n";
             MaxHeap h;
-            int choice, val;
+            int choice, val;-
             do
             {
                 cout << "\nMenu:\n";

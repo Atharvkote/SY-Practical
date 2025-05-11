@@ -1,67 +1,75 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
+class Edge {
+public:
+    int src;
+    int dest;
+    int weight;
+
+    Edge(int src, int dest, int weight) : src(src), dest(dest), weight(weight) {}
+};
+
 class Graph {
-    int n;  
-    int adjMat[10][10];  
-    int adjList[10][10]; 
-    int listSize[10];    
+private:
+    int matrix[100][100];  
+    vector<vector<Edge>> adj_list;
+    int n;
 
 public:
-    Graph(int size) {
-        n = size;
-        for (int i = 0; i < n; i++) {
-            listSize[i] = 0;
-            for (int j = 0; j < n; j++) {
-                adjMat[i][j] = 0;
-                adjList[i][j] = -1; 
+    Graph(int n) {
+        this->n = n;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                matrix[i][j] = 0;
             }
         }
+        adj_list = vector<vector<Edge>>(n);
     }
 
-    void addEdge(int u, int v) {
-        if (u >= n || v >= n || u < 0 || v < 0) {
-            cout << "Invalid Edge!" << endl;
-            return;
-        }
-        adjMat[u][v] = 1;
-        adjMat[v][u] = 1; 
-        adjList[u][listSize[u]++] = v;
-        adjList[v][listSize[v]++] = u;
+    void add_edge(int src, int dest, int wt) {
+        matrix[src][dest] = wt;
+        matrix[dest][src] = wt;
+        adj_list[src].push_back(Edge(src, dest, wt));
+        adj_list[dest].push_back(Edge(dest, src, wt));
     }
 
-    void displayMatrix() {
-        cout << "\nAdjacency Matrix:\n";
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                cout << adjMat[i][j] << " ";
+    void print_matrix() {
+        cout << "Adjacency Matrix:\n";
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                cout << matrix[i][j] << " ";
             }
-            cout << endl;
+            cout << "\n";
         }
     }
 
-    void displayList() {
-        cout << "\nAdjacency List:\n";
-        for (int i = 0; i < n; i++) {
+    void print_list() {
+        cout << "Adjacency List:\n";
+        for (int i = 0; i < n; ++i) {
             cout << i << " -> ";
-            for (int j = 0; j < listSize[i]; j++) {
-                cout << adjList[i][j] << " ";
+            for (int j = 0; j < adj_list[i].size(); ++j) {
+                Edge e = adj_list[i][j];
+                cout << "(" << e.dest << ", wt=" << e.weight << ") ";
             }
-            cout << endl;
+            cout << "\n";
         }
     }
 };
 
 int main() {
-    int size, choice, u, v;
-    cout << "Enter number of nodes: ";
-    cin >> size;
-    
-    Graph g(size);
+    int choice;
+    int n;
 
-    do {
-        cout << "\nGraph Menu:\n";
+    cout << "Enter number of nodes: ";
+    cin >> n;
+
+    Graph g(n);
+
+    while (true) {
+        cout << "\nMenu:\n";
         cout << "1. Add Edge\n";
         cout << "2. Display Adjacency Matrix\n";
         cout << "3. Display Adjacency List\n";
@@ -70,24 +78,30 @@ int main() {
         cin >> choice;
 
         switch (choice) {
-            case 1:
-                cout << "Enter edge (u v): ";
-                cin >> u >> v;
-                g.addEdge(u, v);
+            case 1: {
+                int src, dest, wt;
+                cout << "Enter source, destination, weight: ";
+                cin >> src >> dest >> wt;
+                if (src >= n || dest >= n || src < 0 || dest < 0) {
+                    cout << "Invalid nodes!\n";
+                } else {
+                    g.add_edge(src, dest, wt);
+                }
                 break;
+            }
             case 2:
-                g.displayMatrix();
+                g.print_matrix();
                 break;
             case 3:
-                g.displayList();
+                g.print_list();
                 break;
             case 4:
-                cout << "Exiting...\n";
-                break;
+                cout << "Exiting.\n";
+                return 0;
             default:
-                cout << "Invalid choice! Try again.\n";
+                cout << "Invalid choice. Try again.\n";
         }
-    } while (choice != 4);
+    }
 
     return 0;
 }

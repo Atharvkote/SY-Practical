@@ -109,8 +109,8 @@ public:
     int heightOfTree(Node *root){
         if(root == nullptr){ return 0; }
         
-        int leftHeight = NumberOfNode(root->left);
-        int rightHeight = NumberOfNode(root->right);
+        int leftHeight = heightOfTree(root->left);
+        int rightHeight = heightOfTree(root->right);
         
         return max(leftHeight , rightHeight) + 1;
     }
@@ -118,7 +118,7 @@ public:
     void getRoot(){ cout << "Root : " << root->data << endl;}
 
     void getLeafNode(Node* root){
-        if(root->left==nullptr && root->right == nullptr){
+        if(root->left == nullptr && root->right == nullptr){
             cout << root->data <<" ,";
         }
         if(root == nullptr){ return; }
